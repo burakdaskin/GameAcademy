@@ -6,7 +6,7 @@ public class Astro_hareket : MonoBehaviour
 {
     public float hiz = 1f; //hiz degiskeni
     public int tas_sayisi; //toplanan taslarin sayisini gorebilmek icin kullaniyoruz
-    public bool indi_mi = false; //platforma inip inmedigini kontrol etmek icin tanýmladik
+    public bool indi_mi = false; //platforma inip inmedigini kontrol etmek icin tanimladik
 
     void FixedUpdate()
     {

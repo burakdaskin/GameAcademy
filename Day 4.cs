@@ -6,37 +6,36 @@ public class Astro_hareket : MonoBehaviour
 {
     public float hiz = 1f; //hiz degiskeni
     public int tas_sayisi; //toplanan taslarin sayisini gorebilmek icin kullaniyoruz
-    public bool indi_mi = false; //platforma inip inmedigini kontrol etmek icin tanimladik
+    public bool indi_mi = false; //platforma inip inmedigini kontrol etmek icin tanımladik
+    public Animator benim_animator; //animasyonu karaktere tanimlayacak
+    float yatay;
+    float dikey;
 
     void FixedUpdate()
     {
-        float yatay = Input.GetAxis("Horizontal"); //yatayda hareket girdisi algilar, (sol-sag yon tuslari veya A-D) 
+        yatay = Input.GetAxis("Horizontal"); //yatayda hareket girdisi algilar, (sol-sag yon tuslari veya A-D) 
         //Debug.Log(yatay);
         transform.position += new Vector3(yatay*hiz, 0, 0); //sadece x ekseninde karaktere yatay*hiz kadar hareket verir
 
         //alttaki if yapisinda karakterin Transform komponentinde Scale'e erisip yonunu degistiriyoruz
         //scale'de yatay icin x'i, dikey icin y'yi eksi ile carpiyoruz
         
-        if (yatay>0) //karakter saga giderse yonu saga bakar
-        {
-            transform.localScale = new Vector3(1, 1, 1);
-        }
-        else if (yatay<0) //sola gidiyorsa sola doner
-        {
-            transform.localScale = new Vector3(-1, 1,1);
-        }
 
-        float dikey = Input.GetAxis("Vertical"); //dikey hareket (yukari-asagi yon tuslari veya W-S)
+        dikey = Input.GetAxis("Vertical"); //dikey hareket (yukari-asagi yon tuslari veya W-S)
         transform.position += new Vector3(0, dikey * hiz, 0);
 
-        if (dikey>0)
+        YonDegistir(); //yon degistirme fonksiyonunu cagiriyoruz
+
+        bool yuruyormuyuz = false; //yuruyup yurumedigini kontrol etmek icin atanan degisken
+        if (yatay!=0) //sag veya sola tiklanmissa
         {
-            transform.localScale = new Vector3(1, 1, 1);
+            yuruyormuyuz = true; 
         }
-        else if (dikey<0)
+        if (yatay==0) //yatayda hareket etmiyorsa
         {
-            transform.localScale = new Vector3(1, -1, 1);
+            yuruyormuyuz = false;
         }
+        benim_animator.SetBool("yuruyormu", yuruyormuyuz); //animator ile kod baglantisini yapiyor
     }
     
     private void OnCollisionEnter2D(Collision2D collision) //carpisma olaylari,OnTriggerEnter>>Temas ettigi anda tetikler
@@ -55,8 +54,6 @@ public class Astro_hareket : MonoBehaviour
             Debug.Log("Ahhhhh!!");//ekrana yazar
             Destroy(this.gameObject); //bagli oldugu nesneyi yokeder (burada Astro yokolur)
         }
-
-
     }
 
     private void OnTriggerExit2D(Collider2D collision) //OnTriggerExit>>Temas kesildikten sonra tetikler
@@ -66,6 +63,27 @@ public class Astro_hareket : MonoBehaviour
             tas_sayisi++; //tas sayisini bir arttir
             Debug.Log("Tas toplandi!"); //ekrana yaz
             Destroy(collision.gameObject); //toplanan nesneyi sil
+        }
+    }
+
+    void YonDegistir()
+    {
+        if (yatay > 0) //karakter saga giderse yonu saga bakar
+        {
+            transform.localScale = new Vector3(1, 1, 1);
+        }
+        else if (yatay < 0) //sola gidiyorsa sola doner
+        {
+            transform.localScale = new Vector3(-1, 1, 1);
+        }
+
+        if (dikey > 0)
+        {
+            transform.localScale = new Vector3(1, 1, 1);
+        }
+        else if (dikey < 0)
+        {
+            transform.localScale = new Vector3(1, -1, 1);
         }
     }
 }

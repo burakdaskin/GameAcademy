@@ -2,13 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class Astro_hareket : MonoBehaviour
 {
     public float hiz = 1f; //hiz degiskeni
     public int tas_sayisi; //toplanan taslarin sayisini gorebilmek icin kullaniyoruz
     public int buyuk_tas_sayisi; //buyuktaslarin sayisi
-    public bool indi_mi = false; //platforma inip inmedigini kontrol etmek icin tanýmladik
+    public bool indi_mi = false; //platforma inip inmedigini kontrol etmek icin tanÄ±mladik
     public Animator benim_animator; //animasyonu karaktere tanimlayacak
     float yatay;
     float dikey;
@@ -21,13 +22,14 @@ public class Astro_hareket : MonoBehaviour
     public Text saglik_text; //saglik ui
     public static bool oyunumuz_basladi_mi = false;
     public GameObject Oyunbasipaneli;
-
-
+    public AudioSource tas_toplama_sesi;
 
     private void Start()
     {
+        
         saglik_text.text = saglik.ToString(); //baslangicta sagligi gosterir
-        oyunumuz_basladi_mi = false;
+        if (oyunumuz_basladi_mi) { Oyunbasipaneli.SetActive(false); oyun_basladi(); } //yeniden baslat'a tiklayinca oyunbasi panelini gizler
+
     }
     void FixedUpdate()
     {
@@ -35,7 +37,7 @@ public class Astro_hareket : MonoBehaviour
         {
             return;
         }
-
+        
         yatay = Input.GetAxis("Horizontal"); //yatayda hareket girdisi algilar, (sol-sag yon tuslari veya A-D) 
         transform.position += new Vector3(yatay*hiz, 0, 0); //sadece x ekseninde karaktere yatay*hiz kadar hareket verir
 
@@ -78,6 +80,7 @@ public class Astro_hareket : MonoBehaviour
 
             if (saglik<=0) //saglik 0 olursa
             {
+
                 Destroy(this.gameObject); //bagli oldugu nesneyi yokeder (burada Astro yokolur)
                 oyunsonupaneli.SetActive(true);  //oyun sonunda ui daki paneli gorunur yapar
                 
@@ -96,6 +99,7 @@ public class Astro_hareket : MonoBehaviour
             toplanan_tas_sayisi.text = tas_sayisi.ToString(); //skorumuzu ui'a yazdiriyoruz
             Debug.Log("Tas toplandi!"); //ekrana yaz
             Destroy(collision.gameObject); //toplanan nesneyi sil
+            tas_toplama_sesi.Play(); //sesi oynat
         }
         if (collision.tag == "Buyuktas") //Tag'i Buyuktas olan nesnelere temas ederse
         {
@@ -103,6 +107,7 @@ public class Astro_hareket : MonoBehaviour
             toplanan_buyuk_tas_sayisi.text = buyuk_tas_sayisi.ToString(); //skorumuzu ui'a yazdiriyoruz
             Debug.Log("BuyukTas toplandi!"); //ekrana yaz
             Destroy(collision.gameObject); //toplanan nesneyi sil
+            tas_toplama_sesi.Play(); //sesi oynat
         }
 
     }
@@ -130,7 +135,10 @@ public class Astro_hareket : MonoBehaviour
 
     public void oyun_basladi() //oyun baslatma fonksiyonu
     {
+       
         oyunumuz_basladi_mi = true;
         Oyunbasipaneli.SetActive(false);
+
     }
+
 }
